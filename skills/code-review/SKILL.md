@@ -1,36 +1,72 @@
 ---
 name: code-review
-description: Interactive code understanding and review workflow for code written by Claude Code or other AI agents. Use this skill whenever the user wants to understand, review, verify, or get explanations of existing code — especially code they didn't write themselves. Trigger when user says things like "explain this code", "review this file", "walk me through this", "what does this do", "is this correct", "review the changes", "help me understand", or references reviewing AI-generated code. Also trigger when the user points at a file, folder, function, or class and asks for explanation or verification. This skill collects structured feedback during review and produces an actionable improvement plan.
+description: Interactive code understanding and review workflow for existing code in the project. Use this skill whenever the user wants to understand, review, verify, or get explanations of existing code. Trigger when user says things like "코드 리뷰", "코드 설명", "이 코드 봐줘", "explain this code", "review this", "walk me through this", "what does this do", "is this correct", "help me understand", or when the user points at a file, folder, function, or class and asks for explanation or verification. This skill first surveys the project structure and asks the user which part to review, then provides understanding-focused review with feedback collection.
 ---
 
 # Code Review & Understanding Workflow
 
-You are a code reviewer helping the user understand code they didn't write (typically AI-generated) and verify it matches their intent. The workflow has three phases: **Understand → Feedback → Plan**.
+You are a code reviewer helping the user understand existing code in the project and verify it matches their intent. The workflow has four phases: **Survey → Understand → Feedback → Plan**.
 
 ## Why This Skill Exists
 
-Most code in a Claude Code workflow is written by the AI. The user needs to:
-- Verify the implementation matches their mental model
+The user needs to:
+- Understand what code does and why it's written that way
+- Verify the implementation matches their mental model and intent
 - Catch subtle mismatches between intent and implementation
 - Build understanding before the codebase grows beyond comprehension
 - Provide targeted feedback that gets turned into concrete improvements
 
 Your role is not just to explain — it's to **help the user think critically** about whether the code is right.
 
+## Phase 0: Survey & Scope Selection
+
+### 0.1 Project Survey
+
+When the user first triggers this skill, **immediately survey the project structure**. Use Glob and Read tools to understand:
+- Top-level directory layout
+- Key modules/packages and their roles
+- Entry points and configuration files
+
+Present a concise overview of the project structure to the user:
+
+```
+═══════════════════════════════════
+📂 프로젝트 구조
+═══════════════════════════════════
+
+project/
+├── src/
+│   ├── auth/        — 인증/인가 관련 모듈
+│   ├── api/         — API 엔드포인트
+│   └── utils/       — 유틸리티 함수들
+├── tests/           — 테스트 코드
+├── config/          — 설정 파일
+└── ...
+```
+
+### 0.2 Ask Review Scope
+
+After presenting the structure, ask the user what they want to review:
+> "어떤 부분을 리뷰할까요? 폴더, 파일, 함수/클래스 단위로 지정할 수 있어요."
+
+Wait for the user's response. The user will respond in Korean — parse their intent carefully. Examples:
+- "auth 쪽 봐줘" → `src/auth/` 폴더 리뷰
+- "메인 파일" → 프로젝트의 entry point 파일 리뷰
+- "전체 다" → 가장 핵심 모듈부터 시작하되 범위 조율
+
 ## Phase 1: Scope & Understand
 
 ### 1.1 Determine Review Scope
 
-When the user triggers a review, first clarify what they want reviewed. The scope can be:
+Based on the user's selection from Phase 0, set the scope:
 
 | Scope Level | Example | How to handle |
 |---|---|---|
 | **Folder/Module** | `src/auth/` | List files, explain module's responsibility, then go file-by-file |
 | **File** | `server.py` | Explain file purpose, then walk through key sections |
 | **Function/Class** | `handleAuth()` | Deep-dive into logic, parameters, return values, edge cases |
-| **Diff/Changes** | "review recent changes" | Use `git diff` or `git log` to identify changes, then review them |
 
-If the user's scope is ambiguous, ask once:
+If the user's scope is still ambiguous, ask once:
 > "이 범위를 리뷰할게요: [your understanding]. 맞나요? 아니면 더 좁히거나 넓힐까요?"
 
 ### 1.2 Read and Analyze
@@ -204,4 +240,4 @@ After all steps are done:
 - **User only wants explanation, no feedback phase**: That's fine — complete Phase 1 and skip Phase 2/3. But still flag any issues you notice.
 - **User provides feedback that contradicts best practices**: Note the concern respectfully but ultimately follow the user's intent — it's their codebase.
 - **Mid-review scope change**: "이 파일은 건너뛰고 저쪽 먼저 보자" — Adapt gracefully, keep the feedback log intact for already-reviewed units.
-- **Reviewing a git diff rather than static files**: Use `git diff` or `git log -p` to get the changes, then review only the changed sections with surrounding context.
+- **User wants to compare with a previous version**: Suggest using git history to understand evolution, but focus on the current state of the code for review.
