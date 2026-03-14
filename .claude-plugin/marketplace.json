@@ -2,7 +2,15 @@
   "name": "halbielee-skills",
   "description": "Personal Claude Code skills for code review, ML workflows, and manufacturing AI development.",
   "version": "0.1.1",
+  "owner": {
+    "name": "halbielee",
+    "url": "https://github.com/halbielee"
+  },
   "plugins": [
-    "code-review"
+    {
+      "name": "code-review",
+      "description": "AI 생성 코드 리뷰 & 이해 워크플로우 (Understand → Feedback → Plan)",
+      "path": "code-review"
+    }
   ]
 }
