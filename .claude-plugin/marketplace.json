@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "code-review",
+      "name": "halbielee",
       "description": "AI 생성 코드 리뷰 & 이해 워크플로우 (Understand → Feedback → Plan)",
       "source": "./code-review"
     }
