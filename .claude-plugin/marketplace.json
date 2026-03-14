@@ -1,5 +1,8 @@
 {
   "name": "halbielee-skills",
   "description": "Personal Claude Code skills for code review, ML workflows, and manufacturing AI development.",
-  "version": "0.1.1"
+  "version": "0.1.1",
+  "plugins": [
+    "code-review"
+  ]
 }

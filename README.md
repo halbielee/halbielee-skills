@@ -28,21 +28,30 @@ cp -r halbielee-skills/skills/code-review ~/.claude/skills/
 |---|---|---|
 | **code-review** | AI 생성 코드 리뷰 & 이해 워크플로우 (Understand → Feedback → Plan) | v0.1 |
 
-## Skill 구조
+## Marketplace 구조
 
 ```
-skills/
-└── code-review/
-    └── SKILL.md
+halbielee-skills/
+├── .claude-plugin/
+│   └── marketplace.json      ← marketplace 메타데이터
+├── code-review/
+│   └── .claude-plugin/
+│       └── plugin.json       ← 플러그인 메타데이터
+│   └── skills/
+│       └── code-review/
+│           └── SKILL.md
+└── README.md
 ```
 
-각 skill은 `skills/<name>/SKILL.md`에 위치. 필요시 `scripts/`, `references/`, `assets/` 추가 가능.
+각 플러그인은 독립 디렉토리에 자체 `.claude-plugin/plugin.json`과 `skills/` 폴더를 가진다.
 
-## 새 Skill 추가
+## 새 Plugin 추가
 
 ```bash
-mkdir skills/new-skill-name
-# skills/new-skill-name/SKILL.md 작성 후 push
+mkdir -p new-plugin/.claude-plugin new-plugin/skills/new-plugin
+# new-plugin/.claude-plugin/plugin.json 작성
+# new-plugin/skills/new-plugin/SKILL.md 작성
+# .claude-plugin/marketplace.json의 plugins 배열에 추가
 ```
 
 ## License

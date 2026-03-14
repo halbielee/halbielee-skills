@@ -1,0 +1,5 @@
+{
+  "name": "code-review",
+  "description": "AI 생성 코드 리뷰 & 이해 워크플로우 (Understand → Feedback → Plan)",
+  "version": "0.1.0"
+}
